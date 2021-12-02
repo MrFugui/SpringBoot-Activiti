@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * @version 1.0.0 2021/11/26
  * @since JDK 1.8.0
  */
-public class activitiUtil{
+public class ActivitiUtil {
 
     private static Pattern humpPattern = Pattern.compile("[A-Z]");
     private static Pattern linePattern = Pattern.compile("_(\\w)");
@@ -83,7 +83,7 @@ public class activitiUtil{
             try {
                 Object obj = field.get(entity);
                 if (!ObjectUtils.isEmpty(obj)) {
-                    String name = activitiUtil.humpToLine(field.getName());
+                    String name = ActivitiUtil.humpToLine(field.getName());
                     eQueryWrapper.eq(name, obj);
                 }
             } catch (IllegalAccessException e) {

@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import com.wangfugui.activiti.dao.dto.PageParamDto;
+import com.wangfugui.activiti.util.ActivitiUtil;
 import com.wangfugui.activiti.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,7 +62,7 @@ public class BaseController<S extends IService<E>, E> {
 
     @PostMapping("/list")
     public ResponseUtils list(@RequestBody E entity) {
-        QueryWrapper<E> queryWrapper = ApprenticeUtil.getQueryWrapper(entity);
+        QueryWrapper<E> queryWrapper = ActivitiUtil.getQueryWrapper(entity);
         List<E> list = baseService.list(queryWrapper);
         return ResponseUtils.success(list);
     }
@@ -79,13 +82,13 @@ public class BaseController<S extends IService<E>, E> {
         QueryWrapper<E> queryWrapper = new QueryWrapper<>();
         //升序
         String asc = pageParamDto.getAsc();
-        if (!StrUtil.isEmpty(asc) && !"null".equals(asc)) {
+        if (!ObjectUtils.isEmpty(asc) && !"null".equals(asc)) {
             String[] split = asc.split(",");
             queryWrapper.orderByAsc(split);
         }
         //降序
         String desc = pageParamDto.getDesc();
-        if (!StrUtil.isEmpty(desc) && !"null".equals(desc)) {
+        if (!ObjectUtils.isEmpty(desc) && !"null".equals(desc)) {
             String[] split = desc.split(",");
             queryWrapper.orderByDesc(split);
         }
@@ -95,7 +98,7 @@ public class BaseController<S extends IService<E>, E> {
 
     @PostMapping("/count")
     public ResponseUtils count(@RequestBody E entity) {
-        QueryWrapper<E> queryWrapper = ApprenticeUtil.getQueryWrapper(entity);
+        QueryWrapper<E> queryWrapper = ActivitiUtil.getQueryWrapper(entity);
         long count = baseService.count(queryWrapper);
         return ResponseUtils.success(count);
     }
