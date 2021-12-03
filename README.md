@@ -212,12 +212,12 @@ exclude = SecurityAutoConfiguration.class
 </definitions>
 ```
 这是一个简单的请假申请流程
-放入指定的文件夹中之后，我们重新启动启动类
-第二步，查看我们的数据表
+## 第六步，放入指定的文件夹中之后，我们重新启动启动类
+## 第七步，查看我们的数据表
 `ACT_RE_PROCDEF`中可以查看到我们的流程
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/7cb6fdef0d3446e9b5a9a276ca7ef0b8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
 至此之后我们的流程就创建完成了，现在来我们的api操作
-第三步，由于我们要跟我们的业务连接到一起，所以我们创建一个请假表
+## 第八步，由于我们要跟我们的业务连接到一起，所以我们创建一个请假表
 
 ```java
 CREATE TABLE `leave` (
@@ -235,10 +235,10 @@ CREATE TABLE `leave` (
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='请假表';
 ```
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/f329522cd59146209871728ca40a6dfc.png)
-第四步，集成底层框架
+## 第九步，集成底层框架
 
 对了，我们没有数据库框架，这里我们使用[mybatisPlusPro](https://blog.csdn.net/csdnerM/article/details/121565202)来作为底层框架
-第五步，创建controller等类
+## 第十步，创建controller等类
 
 ```java
 import com.wangfugui.activiti.dao.LeaveDO;
@@ -311,7 +311,7 @@ hellow啊，靓仔，有没有看过前面的内容啊？
 
         </dependency>
 ```
-## 第一步，好的，为了接下来方便接口的测试，我们使用swagger来快速搭建
+## 第十一步，好的，为了接下来方便接口的测试，我们使用swagger来快速搭建
 
 ```java
  <!--swagger-->
@@ -328,7 +328,7 @@ hellow啊，靓仔，有没有看过前面的内容啊？
         <!--swagger-->
 
 ```
-## 第二步，编写controller类
+## 第十二步，编写controller类
 
 ```java
 import com.wangfugui.activiti.dao.LeaveVo;
@@ -384,7 +384,7 @@ public class LeaveController {
 ```
 这次我们先来个简单的创建流程，获取待办流程，审批流程
 所以我们就看到了这三个接口
-## 第三步，我们进入到实现类中查看
+## 第十三步，我们进入到实现类中查看
 
 ```java
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -505,7 +505,7 @@ public class LeaveServiceImpl extends ServiceImpl<LeaveMapper, Leaves> implement
 
 ```
 这三个的解释已经写在代码里面啦，大家可以去看看注释
-## 第四步，我们来看一下我们的测试
+## 第十四步，我们来看一下我们的测试
 发起一个流程
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/1e3655cdeaf94b80a9f7241d31dcb6a1.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/641eaeb1605549cc8de394e097b0a702.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
