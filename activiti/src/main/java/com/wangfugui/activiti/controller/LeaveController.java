@@ -7,10 +7,14 @@ import com.wangfugui.activiti.dao.dto.UpcomingDto;
 import com.wangfugui.activiti.service.LeaveService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -46,6 +50,29 @@ public class LeaveController {
         return leaveService.handle(handleDto);
     }
 
+    @GetMapping("/myleave")
+    @ApiOperation("我发起的请假流程")
+    public List<LeaveVo> myleave(@RequestParam String userId) {
+        return leaveService.myleave(userId);
+    }
+
+    @GetMapping("/getHistory")
+    @ApiOperation("获取历史流程信息")
+    public HistoricProcessInstance getHistory(@RequestParam String procInstId) {
+        return leaveService.getHiProcByProcInstId(procInstId);
+    }
+
+    @GetMapping("/getHiProcByProcKeyAndBusinessID")
+    @ApiOperation("获取历史任务")
+    public HistoricProcessInstance getHiProcByProcKeyAndBusinessID(@RequestParam String procKey, @RequestParam String businessID) {
+        return leaveService.getHiProcByProcKeyAndBusinessID(procKey, businessID);
+    }
+
+    @GetMapping("/getTaskById")
+    @ApiOperation("根据taskid获取历史任务")
+    public HistoricTaskInstance getTaskById(@RequestParam String taskId) {
+        return leaveService.getTaskById(taskId);
+    }
 
 
 }

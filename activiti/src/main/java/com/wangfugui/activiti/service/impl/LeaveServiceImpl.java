@@ -1,5 +1,6 @@
 package com.wangfugui.activiti.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wangfugui.activiti.dao.LeaveVo;
 import com.wangfugui.activiti.dao.Leaves;
@@ -7,14 +8,21 @@ import com.wangfugui.activiti.dao.dto.HandleDto;
 import com.wangfugui.activiti.dao.dto.UpcomingDto;
 import com.wangfugui.activiti.dao.mapper.LeaveMapper;
 import com.wangfugui.activiti.service.LeaveService;
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricProcessInstanceQuery;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +44,8 @@ public class LeaveServiceImpl extends ServiceImpl<LeaveMapper, Leaves> implement
     private IdentityService identityservice;
     @Autowired
     private TaskService taskservice;
+    @Autowired
+    private HistoryService historyService;
 
 
     /**
@@ -114,4 +124,102 @@ public class LeaveServiceImpl extends ServiceImpl<LeaveMapper, Leaves> implement
         taskservice.complete(handleDto.getTaskId(), variables);
         return "处理成功";
     }
+
+    /**
+     * 我发起的请假流程
+     *
+     * @Param: []
+     * @return: java.util.List<com.wangfugui.activiti.dao.LeaveVo>
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     * @param userId
+     */
+    @Override
+    public List<LeaveVo> myleave(String userId) {
+        QueryWrapper<Leaves> leavesQueryWrapper = new QueryWrapper<>();
+        leavesQueryWrapper.lambda().eq(Leaves::getUserId, userId);
+        //从请假表中获取数据
+        List<Leaves> list = this.list(leavesQueryWrapper);
+        ArrayList<LeaveVo> leaveVos = new ArrayList<>();
+        for (Leaves leaves : list) {
+            //获取当前流程转态
+            ProcessInstance process = runtimeservice.createProcessInstanceQuery().
+                    processInstanceId(leaves.getProcessInstanceId()).singleResult();
+            LeaveVo leaveVo = new LeaveVo();
+            BeanUtils.copyProperties(leaves, leaveVo);
+            if (process == null) {
+                leaveVo.setStatus("已结束");
+            } else {
+                leaveVo.setStatus("运行中");
+            }
+            leaveVos.add(leaveVo);
+
+        }
+        return leaveVos;
+    }
+
+    /** 获取历史流程信息
+     * @Param: [procInstId]
+     * @return: org.activiti.engine.history.HistoricProcessInstance
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     */
+    @Override
+    public HistoricProcessInstance getHiProcByProcInstId(String procInstId) {
+        if (ObjectUtils.isEmpty(procInstId)) {
+            return null;
+        }
+        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery();
+        //设置当前用户参数
+        query.processInstanceId(procInstId);
+        //排序
+        query.orderByProcessInstanceStartTime().desc();
+
+        return query.singleResult();
+    }
+
+    /** 获取历史任务
+     * @Param: [procKey, businessID]
+     * @return: org.activiti.engine.history.HistoricProcessInstance
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     */
+    @Override
+    public HistoricProcessInstance getHiProcByProcKeyAndBusinessID(String procKey, String businessID) {
+        HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery();
+        //设置当前用户参数
+        query.processDefinitionKey(procKey);
+        query.processInstanceBusinessKey(businessID);
+        //排序
+        query.orderByProcessInstanceStartTime().desc();
+        //
+        List<HistoricProcessInstance> historicProcessInstanceList = query.list();
+        if(historicProcessInstanceList == null || historicProcessInstanceList.size() == 0){
+            return null;
+        } else if(historicProcessInstanceList.size() > 1){
+            for(int i=0;i<historicProcessInstanceList.size();i++){
+                HistoricProcessInstance historicProcessInstance = historicProcessInstanceList.get(i);
+                if(historicProcessInstance.getEndTime() == null){
+                    return historicProcessInstance;
+                }
+            }
+        }
+        return historicProcessInstanceList.get(0);
+    }
+
+    /**
+     * 根据taskid获取历史任务
+     *
+     * @param taskId
+     * @return
+     */
+    @Override
+    public HistoricTaskInstance getTaskById(String taskId)  {
+        HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery();
+        query.taskId(taskId);
+        //排序
+        query.orderByTaskCreateTime().desc();
+        return query.singleResult();
+    }
+
 }

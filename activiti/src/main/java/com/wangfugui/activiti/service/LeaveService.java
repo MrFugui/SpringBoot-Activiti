@@ -5,6 +5,8 @@ import com.wangfugui.activiti.dao.LeaveVo;
 import com.wangfugui.activiti.dao.Leaves;
 import com.wangfugui.activiti.dao.dto.HandleDto;
 import com.wangfugui.activiti.dao.dto.UpcomingDto;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 
 import java.util.List;
 
@@ -47,4 +49,36 @@ public interface LeaveService extends IService<Leaves> {
     String handle(HandleDto handleDto);
 
 
+    /** 我发起的请假流程
+     * @Param: []
+     * @return: java.util.List<com.wangfugui.activiti.dao.LeaveVo>
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     * @param userId
+     */
+    List<LeaveVo> myleave(String userId);
+
+    /** 获取历史流程信息
+     * @Param: [procInstId]
+     * @return: org.activiti.engine.history.HistoricProcessInstance
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     */
+    HistoricProcessInstance getHiProcByProcInstId(String procInstId);
+
+    /** 获取历史任务
+     * @Param: [procKey, businessID]
+     * @return: org.activiti.engine.history.HistoricProcessInstance
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     */
+    HistoricProcessInstance getHiProcByProcKeyAndBusinessID(String procKey, String businessID);
+
+    /**
+     * @Param: [taskId]
+     * @return: org.activiti.engine.history.HistoricTaskInstance
+     * @Author: MaSiyi
+     * @Date: 2021/12/4
+     */
+    HistoricTaskInstance getTaskById(String taskId);
 }

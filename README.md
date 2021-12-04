@@ -517,3 +517,46 @@ public class LeaveServiceImpl extends ServiceImpl<LeaveMapper, Leaves> implement
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/4e0085782dfb425c81673eced6c30da4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
 好了，今天的简单的基本方法就到这里了
 下一篇介绍查看历史流程等的集成
+今天我们来讲一下历史流程
+## 第十五步首先我们要知道activiti中历史Service是`HistoryService`
+所以我们第一步就将`HistoryService`注入进来
+![在这里插入图片描述](https://img-blog.csdnimg.cn/fa07f6a56bc24b72af4d8fc5664ce57b.png)
+## 第十六步，编写获取历史流程方法
+
+```java
+   @GetMapping("/myleave")
+    @ApiOperation("我发起的请假流程")
+    public List<LeaveVo> myleave(@RequestParam String userId) {
+        return leaveService.myleave(userId);
+    }
+
+```
+这个接口是根据userId获取发起的请假流程
+
+```java
+    @GetMapping("/getHistory")
+    @ApiOperation("获取历史流程信息")
+    public HistoricProcessInstance getHistory(@RequestParam String procInstId) {
+        return leaveService.getHiProcByProcInstId(procInstId);
+    }
+```
+这个接口是什么呢 `procInstId`又是什么？
+![在这里插入图片描述](https://img-blog.csdnimg.cn/8af405af9fc64f6b88fc7336904ee009.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/1f25839266484ef1aa4d634ca6fb4191.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
+第三个接口
+
+```java
+    @GetMapping("/getHiProcByProcKeyAndBusinessID")
+    @ApiOperation("获取历史任务")
+    public HistoricProcessInstance getHiProcByProcKeyAndBusinessID(@RequestParam String procKey, @RequestParam String businessID) {
+        return leaveService.getHiProcByProcKeyAndBusinessID(procKey, businessID);
+    }
+
+```
+procKey和businessID又是什么？
+![在这里插入图片描述](https://img-blog.csdnimg.cn/1422d139d51f44e8bfca65ab8e998521.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
+businessID是我们的业务主键
+![在这里插入图片描述](https://img-blog.csdnimg.cn/4f435a550eb54939b5df1e849ff4aecc.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
+关联在这张表中
+![在这里插入图片描述](https://img-blog.csdnimg.cn/60b137b79aff414583ee5619d225a614.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/5d78098ad1d849f0be17909dbb9bb450.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5o6J5aS05Y-R55qE546L5a-M6LS1,size_20,color_FFFFFF,t_70,g_se,x_16)
